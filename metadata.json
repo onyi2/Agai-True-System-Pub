@@ -1,0 +1,6 @@
+{
+  "name": "Agai Pub Management",
+  "description": "A high-end pub management system featuring real-time inventory tracking, staff shift scheduling, loss control, and dynamic sales reporting with a luxury dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
