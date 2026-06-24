@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingCart, Search, Plus, Minus, Trash2, CheckCircle, Smartphone, CreditCard, DollarSign, Award, Printer } from 'lucide-react';
+import { ShoppingCart, Search, Plus, Minus, Trash2, CheckCircle, Smartphone, CreditCard, DollarSign, Award, Printer, Upload, Loader2 } from 'lucide-react';
 import { InventoryItem, Sale, SaleItem } from '../types';
 
 interface POSSystemProps {
@@ -17,8 +17,70 @@ export const POSSystem: React.FC<POSSystemProps> = ({ inventory, currentUser, on
   const [discountPercent, setDiscountPercent] = useState<number>(0);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const [lastSaleAmount, setLastSaleAmount] = useState<number>(0);
+  const [isParsingReport, setIsParsingReport] = useState<boolean>(false);
 
   const categories = ['All', 'Beer', 'Spirits', 'Wine', 'Soft Drinks', 'Food'];
+
+  // Handle Report Upload
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsParsingReport(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64String = (event.target?.result as string).split(',')[1];
+        
+        const response = await fetch('/api/parse-shift-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileData: base64String,
+            mimeType: file.type
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.error) {
+          alert("Error parsing report: " + data.error);
+        } else if (data.items && Array.isArray(data.items)) {
+          // Add parsed items to cart
+          let matchedCount = 0;
+          let newCart = [...cart];
+          
+          data.items.forEach((parsedItem: any) => {
+            // Find best matching inventory item
+            const match = inventory.find(i => 
+              i.name.toLowerCase().includes(parsedItem.name.toLowerCase()) || 
+              parsedItem.name.toLowerCase().includes(i.name.toLowerCase())
+            );
+
+            if (match) {
+              const existingIndex = newCart.findIndex(c => c.item.id === match.id);
+              if (existingIndex >= 0) {
+                newCart[existingIndex].quantity += (parsedItem.quantity || 1);
+              } else {
+                newCart.push({ item: match, quantity: parsedItem.quantity || 1 });
+              }
+              matchedCount++;
+            }
+          });
+          
+          setCart(newCart);
+          alert(`Successfully parsed report and added ${matchedCount} recognized items to cart for review.`);
+        }
+        
+        setIsParsingReport(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to parse report.");
+      setIsParsingReport(false);
+    }
+  };
 
   // Filter inventory
   const filteredItems = inventory.filter(item => {
@@ -142,7 +204,13 @@ export const POSSystem: React.FC<POSSystemProps> = ({ inventory, currentUser, on
             />
           </div>
           
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
+            <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 bg-brand-gold text-brand-dark shadow-md flex items-center gap-1.5 hover:bg-brand-gold/90 ${isParsingReport ? 'opacity-50 pointer-events-none' : ''}`}>
+              {isParsingReport ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              {isParsingReport ? 'Parsing...' : 'Upload Report'}
+              <input type="file" accept="image/*,.pdf,.csv" className="hidden" onChange={handleFileUpload} disabled={isParsingReport} />
+            </label>
+            <div className="w-px h-6 bg-brand-card-light/50 mx-1"></div>
             {categories.map(cat => (
               <button
                 key={cat}
