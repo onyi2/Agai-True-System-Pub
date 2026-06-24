@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingCart, Search, Plus, Minus, Trash2, CheckCircle, Smartphone, CreditCard, DollarSign, Award } from 'lucide-react';
+import { ShoppingCart, Search, Plus, Minus, Trash2, CheckCircle, Smartphone, CreditCard, DollarSign, Award, Printer } from 'lucide-react';
 import { InventoryItem, Sale, SaleItem } from '../types';
 
 interface POSSystemProps {
@@ -126,7 +126,7 @@ export const POSSystem: React.FC<POSSystemProps> = ({ inventory, currentUser, on
   return (
     <div id="pos-terminal" className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
       {/* Products Selection Panel (2 Cols) */}
-      <div className="xl:col-span-2 flex flex-col gap-4">
+      <div className="xl:col-span-2 flex flex-col gap-4 print:hidden">
         {/* Search & Category Filter Header */}
         <div className="bg-brand-card border border-brand-card-light p-4 rounded-xl shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="relative flex-1">
@@ -236,7 +236,7 @@ export const POSSystem: React.FC<POSSystemProps> = ({ inventory, currentUser, on
       </div>
 
       {/* Cart & Checkout Side Panel */}
-      <div className="bg-brand-card border border-brand-card-light rounded-xl p-5 shadow-lg flex flex-col justify-between h-[610px]">
+      <div className="bg-brand-card border border-brand-card-light rounded-xl p-5 shadow-lg flex flex-col justify-between min-h-[500px] xl:h-[610px] mt-6 xl:mt-0 print:hidden">
         <div>
           <div className="flex justify-between items-center border-b border-brand-card-light pb-3 mb-4">
             <div className="flex items-center gap-2">
@@ -381,18 +381,86 @@ export const POSSystem: React.FC<POSSystemProps> = ({ inventory, currentUser, on
             </div>
           </div>
 
-          {/* Log Sale Submission */}
-          <button
-            onClick={handleCheckout}
-            disabled={cart.length === 0}
-            className={`w-full py-3 rounded-xl font-bold tracking-wide transition-all shadow-md flex items-center justify-center gap-2 ${
-              cart.length === 0
-                ? 'bg-brand-card-light text-brand-light/30 cursor-not-allowed border border-brand-card-light'
-                : 'bg-brand-emerald text-brand-dark hover:bg-brand-emerald/90 active:scale-98 shadow-[0_4px_15px_rgba(0,212,165,0.25)]'
-            }`}
-          >
-            <ShoppingCart className="w-4 h-4" /> Log POS Sale
-          </button>
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => window.print()}
+              disabled={cart.length === 0}
+              className={`flex-1 py-3 rounded-xl font-bold tracking-wide transition-all shadow-md flex items-center justify-center gap-2 ${
+                cart.length === 0
+                  ? 'bg-brand-card-light text-brand-light/30 cursor-not-allowed border border-brand-card-light'
+                  : 'bg-brand-card text-brand-light hover:bg-brand-card-light active:scale-98 border border-brand-light/20'
+              }`}
+            >
+              <Printer className="w-4 h-4" /> Print
+            </button>
+            <button
+              onClick={handleCheckout}
+              disabled={cart.length === 0}
+              className={`flex-[2] py-3 rounded-xl font-bold tracking-wide transition-all shadow-md flex items-center justify-center gap-2 ${
+                cart.length === 0
+                  ? 'bg-brand-card-light text-brand-light/30 cursor-not-allowed border border-brand-card-light'
+                  : 'bg-brand-emerald text-brand-dark hover:bg-brand-emerald/90 active:scale-98 shadow-[0_4px_15px_rgba(0,212,165,0.25)]'
+              }`}
+            >
+              <ShoppingCart className="w-4 h-4" /> Log POS Sale
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Hidden Printable Receipt */}
+      <div id="printable-receipt" className="hidden print:block fixed inset-0 z-[1000] bg-white text-black p-4 w-full h-full overflow-visible">
+        <div className="max-w-[80mm] mx-auto text-sm font-sans bg-white text-black">
+          <div className="text-center mb-4 border-b border-dashed border-gray-400 pb-4">
+            <h1 className="font-bold text-xl uppercase mb-1 font-display">Agai True Pub</h1>
+            <p className="text-xs text-gray-600">Nairobi, Kenya</p>
+            <p className="text-xs text-gray-600 mb-2">Tel: +254 700 000 000</p>
+            <p className="text-xs text-gray-500">Date: {new Date().toLocaleString()}</p>
+            <p className="text-xs text-gray-500">Cashier: {currentUser}</p>
+          </div>
+
+          <div className="mb-4">
+            <div className="flex justify-between text-xs font-bold border-b border-black pb-1 mb-2">
+              <span className="w-1/2">Item</span>
+              <span className="w-1/4 text-center">Qty</span>
+              <span className="w-1/4 text-right">Amt</span>
+            </div>
+            {cart.map(({ item, quantity }) => (
+              <div key={item.id} className="flex justify-between text-xs mb-1">
+                <span className="w-1/2 pr-1">{item.name}</span>
+                <span className="w-1/4 text-center">{quantity}</span>
+                <span className="w-1/4 text-right">{(item.sellPrice * quantity).toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="border-t border-dashed border-gray-400 pt-2 mb-4 text-sm">
+            <div className="flex justify-between mb-1">
+              <span>Subtotal:</span>
+              <span>KES {subtotal.toLocaleString()}</span>
+            </div>
+            {discountPercent > 0 && (
+              <div className="flex justify-between mb-1">
+                <span>Discount ({discountPercent}%):</span>
+                <span>- {discountValue.toLocaleString()}</span>
+              </div>
+            )}
+            <div className="flex justify-between mb-1">
+              <span>Payment Mode:</span>
+              <span>{paymentMethod}</span>
+            </div>
+            <div className="flex justify-between font-bold text-base mt-2 border-t border-black pt-1">
+              <span>Total:</span>
+              <span>KES {total.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <div className="text-center text-xs text-gray-500 border-t border-dashed border-gray-400 pt-4">
+            <p className="font-bold text-black mb-1">Thank you for your visit!</p>
+            <p>Please come again</p>
+            <p className="mt-2 text-[10px]">Powered by Agai True Pub POS</p>
+          </div>
         </div>
       </div>
 

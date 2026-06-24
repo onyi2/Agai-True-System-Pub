@@ -496,7 +496,7 @@ export default function App() {
     <div id="pub-app-root" className="min-h-screen bg-brand-dark text-brand-light flex flex-col font-sans">
       
       {/* 1. Header / Navbar */}
-      <header className="bg-brand-card/80 backdrop-blur-md border-b border-brand-card-light/60 sticky top-0 z-40 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <header className="bg-brand-card/80 backdrop-blur-md border-b border-brand-card-light/60 sticky top-0 z-40 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 print:hidden">
         
         {/* Brand Information */}
         <div className="flex items-center gap-3">
@@ -557,7 +557,7 @@ export default function App() {
       <div className="flex-1 flex flex-col lg:flex-row">
         
         {/* Left Sidebar Menu */}
-        <aside className="w-full lg:w-64 bg-brand-card/30 border-r border-brand-card-light/30 p-4 shrink-0 flex flex-col justify-between">
+        <aside className="w-full lg:w-64 bg-brand-card/30 border-r border-brand-card-light/30 p-4 shrink-0 flex flex-col justify-between print:hidden">
           <div className="space-y-1.5">
             <p className="text-[10px] font-bold text-brand-light/30 uppercase tracking-widest px-3 mb-3">Navigation Menu</p>
             
@@ -630,7 +630,7 @@ export default function App() {
         </aside>
 
         {/* Main Content Workspace Panel */}
-        <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full print:p-0 print:m-0 print:max-w-none">
           
           {/* Active View Container */}
           <AnimatePresence mode="wait">
@@ -643,7 +643,7 @@ export default function App() {
             >
               
               {/* HEADER LABELS FOR ACTIVE MODULES */}
-              <div className="mb-4">
+              <div className="mb-4 print:hidden">
                 <h2 className="text-2xl font-bold tracking-tight text-white font-display">
                   {activeTab === 'dashboard' && 'Owner Overview'}
                   {activeTab === 'pos' && 'Bartender Terminal POS'}
@@ -896,7 +896,7 @@ export default function App() {
       </div>
 
       {/* 3. Footer */}
-      <footer className="bg-brand-card/30 border-t border-brand-card-light/20 p-4 mt-auto text-center text-[10px] text-brand-light/30 font-medium">
+      <footer className="bg-brand-card/30 border-t border-brand-card-light/20 p-4 mt-auto text-center text-[10px] text-brand-light/30 font-medium print:hidden">
         <span>© 2026 Agai True Pub Management Suite • Powered by Kepler Camp Codes . All rights reserved.</span>
       </footer>
 
