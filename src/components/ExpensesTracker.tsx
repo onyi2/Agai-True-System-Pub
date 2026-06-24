@@ -192,7 +192,7 @@ export const ExpensesTracker: React.FC<ExpensesTrackerProps> = ({
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-brand-light/60 font-medium mb-1">Amount (KES) *</label>
                 <input
@@ -229,7 +229,7 @@ export const ExpensesTracker: React.FC<ExpensesTrackerProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-brand-light/60 font-medium mb-1">Payment Status *</label>
                 <div className="flex gap-2">

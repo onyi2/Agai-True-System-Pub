@@ -18,14 +18,22 @@ import { StaffScheduler } from './components/StaffScheduler';
 import { LossControl } from './components/LossControl';
 import { ExpensesTracker } from './components/ExpensesTracker';
 import { SalesHistoryTable } from './components/SalesHistoryTable';
+import { DailyReportsModal } from './components/DailyReportsModal';
+
+import { Login } from './components/Login';
 
 export default function App() {
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUserName, setCurrentUserName] = useState('');
+
   // Core application state
   const [state, setState] = useState(() => loadState());
   const [currentUserRole, setCurrentUserRole] = useState<'Manager' | 'Bartender'>('Manager');
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showResetModal, setShowResetModal] = useState(false);
+  const [showDailyReportModal, setShowDailyReportModal] = useState(false);
 
   // Real-time ticking clock
   useEffect(() => {
@@ -492,6 +500,18 @@ export default function App() {
   // Filter low stock items for dashboard alert feed
   const lowStockProducts = inventory.filter(item => item.quantity <= item.minThreshold);
 
+  if (!isAuthenticated) {
+    return (
+      <Login 
+        onLogin={(role, name) => {
+          setCurrentUserRole(role);
+          setCurrentUserName(name);
+          setIsAuthenticated(true);
+        }} 
+      />
+    );
+  }
+
   return (
     <div id="pub-app-root" className="min-h-screen bg-brand-dark text-brand-light flex flex-col font-sans">
       
@@ -601,20 +621,27 @@ export default function App() {
           </div>
 
           {/* Current Operator Badge */}
-          <div className="mt-8 border-t border-brand-card-light/40 pt-4 px-2 space-y-4">
+          <div className="mt-8 border-t border-brand-card-light/40 pt-4 px-2 space-y-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-brand-card-light flex items-center justify-center font-bold text-xs text-brand-emerald">
-                {currentUserRole === 'Manager' ? 'FO' : 'JW'}
+                {currentUserName.substring(0, 2).toUpperCase()}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-white truncate">
-                  {currentUserRole === 'Manager' ? 'Francis Onyi' : 'Jane Wambui'}
+                  {currentUserName}
                 </p>
                 <p className="text-[10px] text-brand-light/40 font-medium">
                   {currentUserRole === 'Manager' ? 'System Administrator' : 'Head Bartender'}
                 </p>
               </div>
             </div>
+
+            <button
+              onClick={() => setIsAuthenticated(false)}
+              className="w-full py-1.5 px-3 bg-brand-card-light/20 text-brand-light/80 border border-brand-card-light rounded text-[10px] font-bold uppercase tracking-wider hover:bg-brand-card hover:text-white transition-all flex items-center justify-center gap-1.5"
+            >
+              <Lock className="w-3 h-3" /> Log Out
+            </button>
 
             {/* Factory Reset Action */}
             {currentUserRole === 'Manager' && (
@@ -673,14 +700,23 @@ export default function App() {
                       <h3 className="font-bold text-sm text-white font-display">Financial Summary Overview</h3>
                       <p className="text-[11px] text-brand-light/50 mt-0.5">Aggregated audit, COGS, stock holdings, and performance statistics.</p>
                     </div>
-                    <button
-                      id="btn-export-dashboard-csv"
-                      onClick={handleExportDashboardCSV}
-                      className="bg-brand-emerald hover:bg-brand-emerald/90 text-brand-dark px-4 py-2 rounded-xl text-xs font-extrabold tracking-wide transition-all shadow-md flex items-center justify-center gap-2 self-start sm:self-center shrink-0 active:scale-98"
-                    >
-                      <Download className="w-4 h-4" />
-                      <span>Download Financial CSV</span>
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-2 self-start sm:self-center shrink-0">
+                      <button
+                        onClick={() => setShowDailyReportModal(true)}
+                        className="bg-brand-gold hover:bg-brand-gold/90 text-brand-dark px-4 py-2 rounded-xl text-xs font-extrabold tracking-wide transition-all shadow-md flex items-center justify-center gap-2 active:scale-98"
+                      >
+                        <Calendar className="w-4 h-4" />
+                        <span>View Daily Report</span>
+                      </button>
+                      <button
+                        id="btn-export-dashboard-csv"
+                        onClick={handleExportDashboardCSV}
+                        className="bg-brand-emerald hover:bg-brand-emerald/90 text-brand-dark px-4 py-2 rounded-xl text-xs font-extrabold tracking-wide transition-all shadow-md flex items-center justify-center gap-2 active:scale-98"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span>Download Financial CSV</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Metric Summary Cards Grid */}
@@ -839,7 +875,7 @@ export default function App() {
               {activeTab === 'pos' && (
                 <POSSystem 
                   inventory={inventory} 
-                  currentUser={currentUserRole === 'Manager' ? 'Francis Onyi' : 'Jane Wambui'}
+                  currentUser={currentUserName}
                   onLogSale={handleLogSale}
                 />
               )}
@@ -874,7 +910,7 @@ export default function App() {
                 <LossControl 
                   inventory={inventory}
                   losses={losses}
-                  currentUser={currentUserRole === 'Manager' ? 'Francis Onyi' : 'Jane Wambui'}
+                  currentUser={currentUserName}
                   onLogLoss={handleLogLoss}
                   onDeleteLoss={handleDeleteLoss}
                 />
@@ -899,6 +935,15 @@ export default function App() {
       <footer className="bg-brand-card/30 border-t border-brand-card-light/20 p-4 mt-auto text-center text-[10px] text-brand-light/30 font-medium print:hidden">
         <span>© 2026 Agai True Pub Management Suite • Powered by Kepler Camp Codes . All rights reserved.</span>
       </footer>
+
+      <DailyReportsModal
+        isOpen={showDailyReportModal}
+        onClose={() => setShowDailyReportModal(false)}
+        sales={sales}
+        expenses={expenses}
+        losses={losses}
+        inventory={inventory}
+      />
 
       {/* System Reset Confirmation Modal */}
       {showResetModal && (

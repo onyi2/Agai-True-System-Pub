@@ -613,7 +613,7 @@ export const SalesHistoryTable: React.FC<SalesHistoryTableProps> = ({ sales, inv
               </div>
 
               <div className="max-h-60 overflow-y-auto border border-brand-card-light/50 rounded-lg">
-                <table className="w-full text-left border-collapse text-[11px]">
+                <table id="table-sales-review" className="w-full text-left border-collapse text-[11px]">
                   <thead>
                     <tr className="bg-brand-dark/80 text-brand-light/40 border-b border-brand-card-light">
                       <th className="p-2 font-mono">Row TX</th>

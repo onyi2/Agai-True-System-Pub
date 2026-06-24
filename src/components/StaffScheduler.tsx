@@ -162,7 +162,7 @@ export const StaffScheduler: React.FC<StaffSchedulerProps> = ({
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-brand-light/60 font-medium mb-1">Start Time *</label>
                         <input
@@ -333,7 +333,7 @@ export const StaffScheduler: React.FC<StaffSchedulerProps> = ({
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-brand-light/60 font-medium mb-1">Assigned Role *</label>
                         <select

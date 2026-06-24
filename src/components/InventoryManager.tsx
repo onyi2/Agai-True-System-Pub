@@ -600,7 +600,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                 >
                   <h4 className="text-lg font-bold text-white mb-4 font-display">Create New Product</h4>
                   <form onSubmit={handleAddSubmit} className="space-y-4 text-xs">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-brand-light/60 font-medium mb-1">Brand Name *</label>
                         <input
@@ -632,7 +632,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-brand-light/60 font-medium mb-1">Category *</label>
                         <select
@@ -722,7 +722,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-brand-light/60 font-medium mb-1">Cost Price (KES) *</label>
                         <input
@@ -789,7 +789,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                 >
                   <h4 className="text-lg font-bold text-white mb-4 font-display">Edit Product</h4>
                   <form onSubmit={handleEditSubmit} className="space-y-4 text-xs">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-brand-light/60 font-medium mb-1">Brand Name *</label>
                         <input
@@ -834,7 +834,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-brand-light/60 font-medium mb-1">Category *</label>
                         <select
@@ -963,7 +963,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-brand-light/60 font-medium mb-1">Cost Price (KES) *</label>
                         <input
@@ -1020,7 +1020,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
           {/* Product list Table */}
           <div className="bg-brand-card border border-brand-card-light rounded-xl overflow-hidden shadow-md">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs">
+              <table id="table-inventory-main" className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-brand-card-light bg-brand-card-light/40 text-brand-light/60 font-semibold tracking-wider uppercase text-[10px]">
                     <th className="p-3">Product / Brand</th>
@@ -1829,7 +1829,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
               {/* REVIEW GRID: MODE 2 (Catalog CSV Importer review) */}
               {inventoryUploadMode === 'csv-catalog' && parsedCatalogUploads.length > 0 && (
                 <div className="bg-brand-dark/40 border border-brand-card-light rounded-xl overflow-hidden text-xs max-h-80 overflow-y-auto">
-                  <table className="w-full text-left text-xs border-collapse">
+                  <table id="table-csv-catalog" className="w-full text-left text-xs border-collapse">
                     <thead>
                       <tr className="bg-brand-card-light/40 text-brand-light/70 font-semibold uppercase tracking-wider text-[10px] border-b border-brand-card-light">
                         <th className="p-3">Product Name</th>
@@ -1927,7 +1927,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
               {/* REVIEW GRID: MODE 3 (Stock Arrival CSV review) */}
               {inventoryUploadMode === 'csv-arrival' && parsedArrivalUploads.length > 0 && (
                 <div className="bg-brand-dark/40 border border-brand-card-light rounded-xl overflow-hidden text-xs max-h-80 overflow-y-auto">
-                  <table className="w-full text-left text-xs border-collapse">
+                  <table id="table-csv-arrival" className="w-full text-left text-xs border-collapse">
                     <thead>
                       <tr className="bg-brand-card-light/40 text-brand-light/70 font-semibold uppercase tracking-wider text-[10px] border-b border-brand-card-light">
                         <th className="p-3">Identifier Lookup</th>
